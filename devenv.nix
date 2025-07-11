@@ -2,15 +2,16 @@
 
 {
   # https://devenv.sh/packages/
-  packages = [ pkgs.nodejs ];
+  packages = [];
 
   # https://devenv.sh/languages/
   languages = {
+    nix.enable = true;
     javascript = {
       enable = true;
       npm = {
         enable = true;
-      }
+      };
     };
   };
 

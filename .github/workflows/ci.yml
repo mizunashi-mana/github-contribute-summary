@@ -1,0 +1,61 @@
+name: CI
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+
+jobs:
+  lint:
+    name: Lint
+    runs-on: ubuntu-latest
+    needs: [detect-changes]
+    steps:
+      - uses: ./.github/actions/setup-devenv
+
+      - name: Run ESLint
+        run: devenv shell npm run lint
+
+  test:
+    name: Test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: ./.github/actions/setup-devenv
+
+      - name: Run tests with coverage
+        id: run-test
+        run: devenv shell npm run test:coverage
+        continue-on-error: true
+
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@18283e04ce6e62d37312384ff67231eb8fd56d24 # v5.4.3
+        with:
+          file: ./coverage/lcov.info
+          flags: unittests
+          name: codecov-umbrella
+
+      - name: Fail workflow if tests failed
+        if: steps.run-test.outcome == 'failure'
+        run: exit 1
+
+      - name: Check coverage summary
+        run: devenv shell npm run coverage:check
+
+  dependency-check:
+    name: Dependency Check
+    runs-on: ubuntu-latest
+    steps:
+      - uses: ./.github/actions/setup-devenv
+
+      - name: Run dependency cruiser
+        run: devenv shell npm run depcruise
+
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: ./.github/actions/setup-devenv
+
+      - name: Build application
+        run: devenv shell npm run build

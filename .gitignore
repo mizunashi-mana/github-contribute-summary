@@ -1,3 +1,6 @@
+/core
+/dependency-graph.svg
+
 # Devenv
 .devenv*
 devenv.local.nix
@@ -7,3 +10,45 @@ devenv.local.nix
 
 # pre-commit
 .pre-commit-config.yaml
+
+# dependencies
+/node_modules
+/.pnp
+.pnp.js
+
+# testing
+/coverage
+
+# next.js
+/.next/
+/out/
+
+# production
+/build
+
+# debug
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# local env files
+.env*.local
+.env
+.env.production
+
+# Security sensitive files
+*.pem
+*.key
+*.p12
+*.pfx
+secrets/
+
+# vercel
+.vercel
+
+# typescript
+*.tsbuildinfo
+next-env.d.ts
+
+# database
+github_data.db
