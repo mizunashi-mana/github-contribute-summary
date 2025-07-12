@@ -1720,33 +1720,7 @@ exports[`snapshot tests for ESLint rules should match the snapshot of rules for 
       },
     ],
   },
-  "settings": {
-    "import/parsers": {
-      "/workspaces/github-contribute-summary/node_modules/@typescript-eslint/parser/dist/index.js": [
-        ".ts",
-        ".mts",
-        ".cts",
-        ".tsx",
-        ".d.ts",
-      ],
-    },
-    "import/resolver": {
-      "/workspaces/github-contribute-summary/node_modules/eslint-import-resolver-node/index.js": {
-        "extensions": [
-          ".js",
-          ".jsx",
-          ".ts",
-          ".tsx",
-        ],
-      },
-      "/workspaces/github-contribute-summary/node_modules/eslint-import-resolver-typescript/lib/index.cjs": {
-        "alwaysTryTypes": true,
-      },
-    },
-    "react": {
-      "version": "detect",
-    },
-  },
+  "settings": undefined,
 }
 `;
 
@@ -3470,33 +3444,7 @@ exports[`snapshot tests for ESLint rules should match the snapshot of rules for 
       },
     ],
   },
-  "settings": {
-    "import/parsers": {
-      "/workspaces/github-contribute-summary/node_modules/@typescript-eslint/parser/dist/index.js": [
-        ".ts",
-        ".mts",
-        ".cts",
-        ".tsx",
-        ".d.ts",
-      ],
-    },
-    "import/resolver": {
-      "/workspaces/github-contribute-summary/node_modules/eslint-import-resolver-node/index.js": {
-        "extensions": [
-          ".js",
-          ".jsx",
-          ".ts",
-          ".tsx",
-        ],
-      },
-      "/workspaces/github-contribute-summary/node_modules/eslint-import-resolver-typescript/lib/index.cjs": {
-        "alwaysTryTypes": true,
-      },
-    },
-    "react": {
-      "version": "detect",
-    },
-  },
+  "settings": undefined,
 }
 `;
 
@@ -5228,32 +5176,6 @@ exports[`snapshot tests for ESLint rules should match the snapshot of rules for 
       },
     ],
   },
-  "settings": {
-    "import/parsers": {
-      "/workspaces/github-contribute-summary/node_modules/@typescript-eslint/parser/dist/index.js": [
-        ".ts",
-        ".mts",
-        ".cts",
-        ".tsx",
-        ".d.ts",
-      ],
-    },
-    "import/resolver": {
-      "/workspaces/github-contribute-summary/node_modules/eslint-import-resolver-node/index.js": {
-        "extensions": [
-          ".js",
-          ".jsx",
-          ".ts",
-          ".tsx",
-        ],
-      },
-      "/workspaces/github-contribute-summary/node_modules/eslint-import-resolver-typescript/lib/index.cjs": {
-        "alwaysTryTypes": true,
-      },
-    },
-    "react": {
-      "version": "detect",
-    },
-  },
+  "settings": undefined,
 }
 `;

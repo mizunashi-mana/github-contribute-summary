@@ -50,5 +50,6 @@ async function calculateConfigForSnapshot(eslint: ESLint, filePath: string) {
       parser: undefined,
       parserOptions: undefined,
     },
+    settings: undefined,
   };
 }
