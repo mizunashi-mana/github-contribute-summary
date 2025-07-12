@@ -2,22 +2,24 @@ import { injectable, inject } from 'inversify';
 import sqlite3 from 'sqlite3';
 import path from 'path';
 import { PullRequestWithReviews, Review, PullRequestRow, ReviewRow, ReviewIdRow } from '@/types';
-import type { IDatabaseService, IConfig } from '@/lib/interfaces';
+import type { IDatabaseService, IConfig, ILogger } from '@/lib/interfaces';
 import { TYPES } from '@/lib/types';
 
 @injectable()
-class Database implements IDatabaseService {
+export class Database implements IDatabaseService {
   private db: sqlite3.Database;
 
-  constructor(@inject(TYPES.Config) private config: IConfig) {
+  constructor(
+    @inject(TYPES.Config) private config: IConfig,
+    @inject(TYPES.Logger) private logger: ILogger,
+  ) {
     const dbPath = this.config.getDatabasePath();
-    // Handle special case for in-memory database
     const finalPath = dbPath === ':memory:'
       ? ':memory:'
       : path.isAbsolute(dbPath) ? dbPath : path.join(process.cwd(), dbPath);
     this.db = new sqlite3.Database(finalPath, (err) => {
       if (err) {
-        console.error('Database connection error:', err);
+        this.logger.error('Database connection error:', err);
       }
     });
     void this.init();
@@ -92,8 +94,8 @@ class Database implements IDatabaseService {
 
   async savePullRequest(pr: PullRequestWithReviews, repository: string): Promise<void> {
     await this.dbRunAsync(`
-      INSERT OR REPLACE INTO pull_requests 
-      (id, number, title, state, created_at, updated_at, closed_at, merged_at, user_login, user_id, html_url, 
+      INSERT OR REPLACE INTO pull_requests
+      (id, number, title, state, created_at, updated_at, closed_at, merged_at, user_login, user_id, html_url,
        repository)
       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     `, [
@@ -103,7 +105,7 @@ class Database implements IDatabaseService {
 
     for (const review of pr.reviews) {
       await this.dbRunAsync(`
-        INSERT OR REPLACE INTO reviews 
+        INSERT OR REPLACE INTO reviews
         (id, pr_id, user_login, user_id, body, state, submitted_at, repository)
         VALUES (?, ?, ?, ?, ?, ?, ?, ?)
       `, [
@@ -115,7 +117,7 @@ class Database implements IDatabaseService {
 
   async getPullRequestsByUser(userLogin: string, repository: string): Promise<PullRequestWithReviews[]> {
     const prs = await this.dbAllAsync<PullRequestRow>(`
-      SELECT * FROM pull_requests 
+      SELECT * FROM pull_requests
       WHERE user_login = ? AND repository = ?
       ORDER BY created_at DESC
     `, [userLogin, repository]);
@@ -124,7 +126,7 @@ class Database implements IDatabaseService {
 
     for (const pr of prs) {
       const reviews = await this.dbAllAsync<ReviewRow>(`
-        SELECT * FROM reviews 
+        SELECT * FROM reviews
         WHERE pr_id = ? AND repository = ?
         ORDER BY submitted_at ASC
       `, [pr.id, repository]);
@@ -174,7 +176,7 @@ class Database implements IDatabaseService {
 
   async getReviewedPullRequests(userLogin: string, repository: string): Promise<PullRequestWithReviews[]> {
     const reviews = await this.dbAllAsync<ReviewIdRow>(`
-      SELECT DISTINCT pr_id FROM reviews 
+      SELECT DISTINCT pr_id FROM reviews
       WHERE user_login = ? AND repository = ?
     `, [userLogin, repository]);
 
@@ -182,15 +184,15 @@ class Database implements IDatabaseService {
 
     for (const review of reviews) {
       const pr = await this.dbAllAsync<PullRequestRow>(`
-        SELECT * FROM pull_requests 
-        WHERE id = ? AND repository = ?
-      `, [review.pr_id, repository]);
+        SELECT * FROM pull_requests
+        WHERE id = ? AND repository = ? AND user_login != ?
+      `, [review.pr_id, repository, userLogin]);
 
       if (pr.length === 0) continue;
 
       const prData = pr[0];
       const allReviews = await this.dbAllAsync<ReviewRow>(`
-        SELECT * FROM reviews 
+        SELECT * FROM reviews
         WHERE pr_id = ? AND repository = ?
         ORDER BY submitted_at ASC
       `, [prData.id, repository]);
@@ -239,12 +241,12 @@ class Database implements IDatabaseService {
 
   async hasCachedData(userLogin: string, repository: string): Promise<boolean> {
     const createdPrs = await this.dbAllAsync<{ count: number }>(`
-      SELECT COUNT(*) as count FROM pull_requests 
+      SELECT COUNT(*) as count FROM pull_requests
       WHERE user_login = ? AND repository = ?
     `, [userLogin, repository]);
 
     const reviewedPrs = await this.dbAllAsync<{ count: number }>(`
-      SELECT COUNT(DISTINCT pr_id) as count FROM reviews 
+      SELECT COUNT(DISTINCT pr_id) as count FROM reviews
       WHERE user_login = ? AND repository = ?
     `, [userLogin, repository]);
 
@@ -284,5 +286,3 @@ class Database implements IDatabaseService {
     });
   }
 }
-
-export { Database };

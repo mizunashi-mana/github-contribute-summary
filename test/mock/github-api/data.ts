@@ -1,0 +1,268 @@
+export const mockData: Record<string, unknown> = {
+  repositories: {
+    'facebook/react': {
+      id: 10270250,
+      name: 'react',
+      full_name: 'facebook/react',
+      description: 'A declarative, efficient, and flexible JavaScript library for building user interfaces.',
+    },
+    'microsoft/vscode': {
+      id: 41881900,
+      name: 'vscode',
+      full_name: 'microsoft/vscode',
+      description: 'Visual Studio Code',
+    },
+    'vercel/next.js': {
+      id: 70107786,
+      name: 'next.js',
+      full_name: 'vercel/next.js',
+      description: 'The React Framework',
+    },
+  },
+  users: {
+    testuser: {
+      login: 'testuser',
+      id: 123456,
+      avatar_url: 'https://avatars.githubusercontent.com/u/123456',
+      type: 'User',
+    },
+    reviewer1: {
+      login: 'reviewer1',
+      id: 234567,
+      avatar_url: 'https://avatars.githubusercontent.com/u/234567',
+      type: 'User',
+    },
+    reviewer2: {
+      login: 'reviewer2',
+      id: 345678,
+      avatar_url: 'https://avatars.githubusercontent.com/u/345678',
+      type: 'User',
+    },
+  },
+  pullRequests: {
+    'facebook/react': [
+      {
+        id: 1001,
+        number: 101,
+        title: 'Fix React component rendering issue',
+        state: 'closed',
+        created_at: '2024-01-15T10:00:00Z',
+        updated_at: '2024-01-20T15:30:00Z',
+        closed_at: '2024-01-20T15:30:00Z',
+        merged_at: '2024-01-20T15:30:00Z',
+        html_url: 'https://github.com/facebook/react/pull/101',
+        user: {
+          login: 'testuser',
+          id: 123456,
+        },
+        assignees: [],
+        requested_reviewers: [],
+        labels: [
+          {
+            name: 'bug',
+            color: 'd73a4a',
+          },
+        ],
+      },
+      {
+        id: 1002,
+        number: 102,
+        title: 'Add new useState hook optimization',
+        state: 'open',
+        created_at: '2024-02-01T09:00:00Z',
+        updated_at: '2024-02-05T16:00:00Z',
+        closed_at: null,
+        merged_at: null,
+        html_url: 'https://github.com/facebook/react/pull/102',
+        user: {
+          login: 'testuser',
+          id: 123456,
+        },
+        assignees: [],
+        requested_reviewers: [
+          {
+            login: 'reviewer1',
+            id: 234567,
+          },
+        ],
+        labels: [
+          {
+            name: 'enhancement',
+            color: 'a2eeef',
+          },
+        ],
+      },
+      {
+        id: 1003,
+        number: 103,
+        title: 'Update documentation for new features',
+        state: 'closed',
+        created_at: '2024-02-10T14:00:00Z',
+        updated_at: '2024-02-15T11:00:00Z',
+        closed_at: '2024-02-15T11:00:00Z',
+        merged_at: '2024-02-15T11:00:00Z',
+        html_url: 'https://github.com/facebook/react/pull/103',
+        user: {
+          login: 'reviewer1',
+          id: 234567,
+        },
+        assignees: [],
+        requested_reviewers: [],
+        labels: [
+          {
+            name: 'documentation',
+            color: '0075ca',
+          },
+        ],
+      },
+      {
+        id: 1004,
+        number: 104,
+        title: 'Improve error handling in development mode',
+        state: 'closed',
+        created_at: '2024-03-01T08:30:00Z',
+        updated_at: '2024-03-05T17:45:00Z',
+        closed_at: '2024-03-05T17:45:00Z',
+        merged_at: '2024-03-05T17:45:00Z',
+        html_url: 'https://github.com/facebook/react/pull/104',
+        user: {
+          login: 'reviewer2',
+          id: 345678,
+        },
+        assignees: [],
+        requested_reviewers: [],
+        labels: [
+          {
+            name: 'enhancement',
+            color: 'a2eeef',
+          },
+        ],
+      },
+    ],
+    'microsoft/vscode': [
+      {
+        id: 2001,
+        number: 201,
+        title: 'Add TypeScript syntax highlighting improvements',
+        state: 'closed',
+        created_at: '2024-01-10T12:00:00Z',
+        updated_at: '2024-01-18T10:30:00Z',
+        closed_at: '2024-01-18T10:30:00Z',
+        merged_at: '2024-01-18T10:30:00Z',
+        html_url: 'https://github.com/microsoft/vscode/pull/201',
+        user: {
+          login: 'testuser',
+          id: 123456,
+        },
+        assignees: [],
+        requested_reviewers: [],
+        labels: [
+          {
+            name: 'feature-request',
+            color: 'c2e0c6',
+          },
+        ],
+      },
+    ],
+  },
+  reviews: {
+    101: [
+      {
+        id: 10001,
+        user: {
+          login: 'reviewer1',
+          id: 234567,
+        },
+        body: 'Looks good to me! The fix addresses the rendering issue properly.',
+        state: 'APPROVED',
+        submitted_at: '2024-01-18T14:00:00Z',
+        pull_request_url: 'https://github.com/facebook/react/pull/101',
+      },
+      {
+        id: 10002,
+        user: {
+          login: 'reviewer2',
+          id: 345678,
+        },
+        body: 'Could you add some unit tests for this fix?',
+        state: 'CHANGES_REQUESTED',
+        submitted_at: '2024-01-17T16:30:00Z',
+        pull_request_url: 'https://github.com/facebook/react/pull/101',
+      },
+      {
+        id: 10003,
+        user: {
+          login: 'reviewer2',
+          id: 345678,
+        },
+        body: 'Tests added, looks good now!',
+        state: 'APPROVED',
+        submitted_at: '2024-01-19T09:15:00Z',
+        pull_request_url: 'https://github.com/facebook/react/pull/101',
+      },
+    ],
+    102: [
+      {
+        id: 10004,
+        user: {
+          login: 'reviewer1',
+          id: 234567,
+        },
+        body: 'This optimization looks promising. Running performance tests.',
+        state: 'COMMENTED',
+        submitted_at: '2024-02-03T11:00:00Z',
+        pull_request_url: 'https://github.com/facebook/react/pull/102',
+      },
+    ],
+    103: [
+      {
+        id: 10005,
+        user: {
+          login: 'testuser',
+          id: 123456,
+        },
+        body: 'Documentation looks comprehensive and clear.',
+        state: 'APPROVED',
+        submitted_at: '2024-02-13T13:30:00Z',
+        pull_request_url: 'https://github.com/facebook/react/pull/103',
+      },
+    ],
+    104: [
+      {
+        id: 10006,
+        user: {
+          login: 'testuser',
+          id: 123456,
+        },
+        body: 'Great improvement to error handling! This will help developers a lot.',
+        state: 'APPROVED',
+        submitted_at: '2024-03-03T15:20:00Z',
+        pull_request_url: 'https://github.com/facebook/react/pull/104',
+      },
+      {
+        id: 10007,
+        user: {
+          login: 'reviewer1',
+          id: 234567,
+        },
+        body: 'Excellent work on the error messages.',
+        state: 'APPROVED',
+        submitted_at: '2024-03-04T09:45:00Z',
+        pull_request_url: 'https://github.com/facebook/react/pull/104',
+      },
+    ],
+    201: [
+      {
+        id: 20001,
+        user: {
+          login: 'reviewer1',
+          id: 234567,
+        },
+        body: 'TypeScript highlighting improvements look great!',
+        state: 'APPROVED',
+        submitted_at: '2024-01-15T16:00:00Z',
+        pull_request_url: 'https://github.com/microsoft/vscode/pull/201',
+      },
+    ],
+  },
+};

@@ -10,6 +10,9 @@ export interface IGitHubAPI {
     created_prs: PullRequestWithReviews[];
     reviewed_prs: PullRequestWithReviews[];
   }>;
+  getPullRequestsByUser(owner: string, repo: string, user: string): Promise<PullRequestWithReviews[]>;
+  getReviewedPullRequests(owner: string, repo: string, user: string): Promise<PullRequestWithReviews[]>;
+  setRequest(request?: NextRequest, token?: string): void;
 }
 
 export interface IDatabaseService {
@@ -34,5 +37,22 @@ export interface IConfig {
   getGitHubToken(): string | undefined;
   getEncryptionPassword(): string | undefined;
   getDatabasePath(): string;
-  isTestEnvironment(): boolean;
+  getLogLevel(): LogLevel;
+}
+
+export interface ILogger {
+  debug(message: string, ...args: unknown[]): void;
+  info(message: string, ...args: unknown[]): void;
+  warn(message: string, ...args: unknown[]): void;
+  error(message: string, ...args: unknown[]): void;
+  setLevel(level: LogLevel): void;
+  isEnabled(level: LogLevel): boolean;
+}
+
+export enum LogLevel {
+  DEBUG = 0,
+  INFO = 1,
+  WARN = 2,
+  ERROR = 3,
+  DISABLED = 4,
 }

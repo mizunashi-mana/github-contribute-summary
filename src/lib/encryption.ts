@@ -23,7 +23,6 @@ export class TokenEncryption {
     let encrypted = cipher.update(token, 'utf8', 'hex');
     encrypted += cipher.final('hex');
 
-    // Format: salt:iv:encrypted (CBC doesn't have auth tag)
     return `${salt.toString('hex')}:${iv.toString('hex')}:${encrypted}`;
   }
 
@@ -51,7 +50,6 @@ export class TokenEncryption {
   }
 
   isEncrypted(value: string): boolean {
-    // Check if the value looks like encrypted format (3 parts separated by colons)
     const parts = value.split(':');
     return parts.length === 3 && parts.every(part => /^[a-f0-9]+$/i.test(part));
   }
@@ -62,7 +60,6 @@ export function getDecryptedToken(envValue?: string): string | undefined {
 
   const encryption = new TokenEncryption();
 
-  // If it looks encrypted, try to decrypt it
   if (encryption.isEncrypted(envValue)) {
     try {
       return encryption.decrypt(envValue);
@@ -73,6 +70,5 @@ export function getDecryptedToken(envValue?: string): string | undefined {
     }
   }
 
-  // Otherwise, treat as plain text
   return envValue;
 }

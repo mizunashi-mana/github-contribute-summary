@@ -1,17 +1,18 @@
 import { injectable, inject } from 'inversify';
 import { PullRequest, Review, PullRequestWithReviews } from '@/types';
-import type { IGitHubAuth, IGitHubAPI, IConfig } from '@/lib/interfaces';
+import type { IGitHubAuth, IGitHubAPI, IConfig, ILogger } from '@/lib/interfaces';
 import { TYPES } from '@/lib/types';
 import { NextRequest } from 'next/server';
 
 @injectable()
-class GitHubAPI implements IGitHubAPI {
+export class GitHubAPI implements IGitHubAPI {
   private request?: NextRequest;
   private clientToken?: string;
 
   constructor(
     @inject(TYPES.GitHubAuth) private auth: IGitHubAuth,
     @inject(TYPES.Config) private config: IConfig,
+    @inject(TYPES.Logger) private logger: ILogger,
   ) {}
 
   public setRequest(request?: NextRequest, token?: string): void {
@@ -25,8 +26,8 @@ class GitHubAPI implements IGitHubAPI {
     const token = this.auth.getToken(this.request, this.clientToken);
     const hasToken = !!token;
     const tokenSource = token ? this.getTokenSource(token) : 'none';
-    console.log(
-      `[GitHub API] ${timestamp} ${method} ${apiPath} (auth: ${hasToken ? 'yes' : 'no'}, source: ${tokenSource})`,
+    this.logger.debug(
+      `GitHub API ${timestamp} ${method} ${apiPath} (auth: ${hasToken ? 'yes' : 'no'}, source: ${tokenSource})`,
     );
   }
 
@@ -49,8 +50,7 @@ class GitHubAPI implements IGitHubAPI {
     const headers = this.auth.getAuthHeaders(this.request, this.clientToken);
     const response = await fetch(url, {
       headers,
-      // Add timeout to prevent hanging requests
-      signal: AbortSignal.timeout(30000), // 30 second timeout
+      signal: AbortSignal.timeout(30000),
     });
 
     if (!response.ok) {
@@ -149,7 +149,7 @@ class GitHubAPI implements IGitHubAPI {
       return await response.json();
     }
     catch (error) {
-      console.warn(`Failed to fetch reviews for PR #${prNumber}:`, error);
+      this.logger.warn(`Failed to fetch reviews for PR #${prNumber}:`, error);
       return [];
     }
   }
@@ -166,5 +166,3 @@ class GitHubAPI implements IGitHubAPI {
     return { created_prs, reviewed_prs };
   }
 }
-
-export { GitHubAPI };

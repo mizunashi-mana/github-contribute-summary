@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
-const crypto = require('crypto');
-const readline = require('readline');
+import crypto from 'crypto';
+import readline from 'readline';
 
 const ALGORITHM = 'aes-256-cbc';
 const IV_LENGTH = 16;
@@ -16,22 +16,23 @@ class TokenEncryption {
     if (!token) return false;
 
     const validPrefixes = [
-      'ghp_',           // Classic Personal Access Token
-      'gho_',           // OAuth token
-      'ghu_',           // User token
-      'ghs_',           // Server token
-      'ghr_',           // Refresh token
-      'github_pat_',     // Fine-grained Personal Access Token
+      'ghp_', // Classic Personal Access Token
+      'gho_', // OAuth token
+      'ghu_', // User token
+      'ghs_', // Server token
+      'ghr_', // Refresh token
+      'github_pat_', // Fine-grained Personal Access Token
     ];
 
-    const hasValidPrefix = validPrefixes.some((prefix) => token.startsWith(prefix));
+    const hasValidPrefix = validPrefixes.some(prefix => token.startsWith(prefix));
     if (!hasValidPrefix) return false;
 
     // Fine-grained tokens are longer (93 characters), classic tokens are ~40 characters
     if (token.startsWith('github_pat_')) {
       // Fine-grained tokens should be around 93 characters
       if (token.length < 80 || token.length > 100) return false;
-    } else {
+    }
+    else {
       // Classic tokens should be around 40 characters
       if (token.length < 40 || token.length > 50) return false;
     }
@@ -100,7 +101,7 @@ function askPassword(question) {
 
     let password = '';
 
-    stdin.on('data', function(char) {
+    function onData(char) {
       char = char.toString();
 
       switch (char) {
@@ -110,6 +111,7 @@ function askPassword(question) {
           stdin.setRawMode(false);
           stdin.pause();
           stdout.write('\n');
+          stdin.removeListener('data', onData);
           resolve(password);
           break;
         case '\u0003': // Ctrl+C
@@ -126,7 +128,9 @@ function askPassword(question) {
           stdout.write('*');
           break;
       }
-    });
+    }
+
+    stdin.on('data', onData);
   });
 }
 
@@ -174,17 +178,18 @@ async function main() {
         console.log('\n.env ファイルに以下のように設定してください:');
         console.log(`GITHUB_TOKEN="${encrypted}"`);
         console.log(`ENCRYPTION_PASSWORD="${password}"`);
-
-      } else if (action === 'decrypt') {
+      }
+      else if (action === 'decrypt') {
         const decrypted = encryption.decrypt(tokenOrEncrypted, password);
         console.log('\n復号化されたトークン:');
         console.log(decrypted);
-
-      } else {
+      }
+      else {
         console.error('無効なアクションです。encrypt または decrypt を指定してください。');
         process.exit(1);
       }
-    } catch (error) {
+    }
+    catch (error) {
       console.error(`エラー: ${error.message}`);
       process.exit(1);
     }
@@ -217,8 +222,8 @@ async function main() {
       console.log('\n.env ファイルに以下のように設定してください:');
       console.log(`GITHUB_TOKEN="${encrypted}"`);
       console.log(`ENCRYPTION_PASSWORD="${password}"`);
-
-    } else if (action.toLowerCase() === 'd') {
+    }
+    else if (action.toLowerCase() === 'd') {
       // 復号化
       const encryptedToken = await askQuestion('暗号化されたトークンを入力してください: ');
       const password = await askPassword('復号化パスワードを入力してください: ');
@@ -228,14 +233,16 @@ async function main() {
 
         console.log('\n復号化されたトークン:');
         console.log(decrypted);
-      } catch (error) {
+      }
+      catch (error) {
         console.error('\n復号化に失敗しました:', error.message);
       }
-
-    } else {
+    }
+    else {
       console.log('無効な選択です。');
     }
-  } catch (error) {
+  }
+  catch {
     console.log('\n操作がキャンセルされました。');
   }
 

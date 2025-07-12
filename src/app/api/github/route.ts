@@ -2,7 +2,7 @@ import 'reflect-metadata';
 import { NextRequest, NextResponse } from 'next/server';
 import { container } from '@/lib/container';
 import { TYPES } from '@/lib/types';
-import type { IGitHubAPI, IDatabaseService } from '@/lib/interfaces';
+import type { IGitHubAPI, IDatabaseService, ILogger } from '@/lib/interfaces';
 import { validateGitHubUsername, validateRepositoryName, sanitizeInput, RateLimiter } from '@/lib/security';
 
 const rateLimiter = new RateLimiter(5, 60000); // 5 requests per minute
@@ -68,9 +68,9 @@ async function handleRequestWithDI(request: NextRequest, isPost = false) {
 
   const gitHubAPI = container.get<IGitHubAPI>(TYPES.GitHubAPI);
   const database = container.get<IDatabaseService>(TYPES.DatabaseService);
+  const logger = container.get<ILogger>(TYPES.Logger);
 
   try {
-    // Set request context for GitHub API if it has the method
     if ('setRequest' in gitHubAPI) {
       (gitHubAPI as IGitHubAPI & {
         setRequest?: (request?: NextRequest, token?: string) => void;
@@ -79,16 +79,13 @@ async function handleRequestWithDI(request: NextRequest, isPost = false) {
 
     const [owner, repository] = repo.split('/');
 
-    // Check for cached data unless refresh is requested
     if (!refresh && await database.hasCachedData(user, repo)) {
       const cachedData = await database.getCachedData(user, repo);
       return NextResponse.json(cachedData);
     }
 
-    // Fetch fresh data from GitHub API
     const data = await gitHubAPI.getAllData(owner, repository, user);
 
-    // Save data to cache
     for (const pr of data.created_prs) {
       await database.savePullRequest(pr, repo);
     }
@@ -101,7 +98,7 @@ async function handleRequestWithDI(request: NextRequest, isPost = false) {
     return NextResponse.json(data);
   }
   catch (error) {
-    console.error('GitHub API Error:', error);
+    logger.error('GitHub API Error:', error);
 
     await database.close();
 
