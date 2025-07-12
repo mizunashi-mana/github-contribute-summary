@@ -1,12 +1,11 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { Dashboard } from '@/components/Dashboard';
 import { TokenInput } from '@/components/TokenInput';
 import { validateGitHubUsername, validateRepositoryName } from '@/lib/security';
 
 export default function Home() {
-  const [mounted, setMounted] = useState(false);
   const [githubUser, setGithubUser] = useState('');
   const [repository, setRepository] = useState('');
   const [githubToken, setGithubToken] = useState('');
@@ -16,10 +15,6 @@ export default function Home() {
   const [shouldFetchData, setShouldFetchData] = useState(false);
   const [userInputError, setUserInputError] = useState('');
   const [repoInputError, setRepoInputError] = useState('');
-
-  useEffect(() => {
-    setMounted(true);
-  }, []);
 
   const handleUserChange = (value: string) => {
     setGithubUser(value);
