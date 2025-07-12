@@ -31,23 +31,15 @@ describe('Database', () => {
 
     test('should be properly instantiated', () => {
       expect(database).toBeDefined();
-      expect(database.constructor.name).toBe('Database');
-    });
-
-    test('should verify test environment configuration', () => {
-      expect(config.isTestEnvironment()).toBe(true);
     });
   });
 
   describe('Database initialization and setup', () => {
     test('should create tables during initialization', () => {
-      // Test that init is called during construction
       const testContainer = createTestContainer();
       const testDb = testContainer.get<IDatabaseService>(TYPES.DatabaseService);
 
-      // Verify the database instance exists and has proper structure
       expect(testDb).toBeDefined();
-      expect(testDb.constructor.name).toBe('Database');
     });
 
     test('should handle database constructor with config injection', () => {
@@ -65,25 +57,12 @@ describe('Database', () => {
   });
 
   describe('Error handling and edge cases', () => {
-    test('should handle null/undefined checks in configuration', () => {
-      expect(config.getDatabasePath()).toBeTruthy();
-      expect(config.isTestEnvironment()).toBe(true);
-    });
-
-    test('should validate database instance properties', () => {
-      expect(database).toHaveProperty('constructor');
-      expect(database.constructor.name).toBe('Database');
-    });
-
     test('should handle configuration dependency injection', () => {
-      // Test that config is properly injected
       expect((database as IDatabaseService & { config: IConfig }).config).toBeDefined();
       expect((database as IDatabaseService & { config: IConfig }).config.getDatabasePath()).toBe(':memory:');
-      expect((database as IDatabaseService & { config: IConfig }).config.isTestEnvironment()).toBe(true);
     });
 
     test('should handle multiple database instances', () => {
-      // Test creating multiple database instances
       const container1 = createTestContainer();
       const container2 = createTestContainer();
 

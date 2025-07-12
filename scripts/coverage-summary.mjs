@@ -4,12 +4,12 @@
  * coverage-final.jsonから全体のカバレッジ率を取得するスクリプト
  */
 
-const fs = require('fs');
-const path = require('path');
+import fs from 'node:fs';
+import path from 'node:path';
 
 function getCoverageSummary() {
   const coverageFilePath = path.join(process.cwd(), 'coverage', 'coverage-final.json');
-  
+
   // coverage-final.jsonが存在するかチェック
   if (!fs.existsSync(coverageFilePath)) {
     console.error('❌ Coverage file not found. Please run tests with coverage first:');
@@ -20,7 +20,7 @@ function getCoverageSummary() {
   try {
     // coverage-final.jsonを読み込み
     const coverageData = JSON.parse(fs.readFileSync(coverageFilePath, 'utf8'));
-    
+
     let totalStatements = 0;
     let coveredStatements = 0;
     let totalBranches = 0;
@@ -31,24 +31,24 @@ function getCoverageSummary() {
     let coveredLines = 0;
 
     // 各ファイルのカバレッジデータを集計
-    Object.entries(coverageData).forEach(([filePath, data]) => {
+    Object.entries(coverageData).forEach(([, data]) => {
       const { s, b, f } = data;
-      
+
       // Statements
       const statements = Object.values(s);
       totalStatements += statements.length;
       coveredStatements += statements.filter(count => count > 0).length;
-      
+
       // Branches
       const branches = Object.values(b).flat();
       totalBranches += branches.length;
       coveredBranches += branches.filter(count => count > 0).length;
-      
+
       // Functions
       const functions = Object.values(f);
       totalFunctions += functions.length;
       coveredFunctions += functions.filter(count => count > 0).length;
-      
+
       // Lines (statementsと同じ扱い)
       totalLines += statements.length;
       coveredLines += statements.filter(count => count > 0).length;
@@ -68,7 +68,7 @@ function getCoverageSummary() {
     console.log(`🔧 Functions:  ${coveredFunctions}/${totalFunctions} (${functionCoverage.toFixed(2)}%)`);
     console.log(`📝 Lines:      ${coveredLines}/${totalLines} (${lineCoverage.toFixed(2)}%)`);
     console.log('========================');
-    
+
     // 全体のカバレッジ率（平均）
     const overallCoverage = (statementCoverage + branchCoverage + functionCoverage + lineCoverage) / 4;
     console.log(`🎯 Overall Coverage: ${overallCoverage.toFixed(2)}%`);
@@ -87,7 +87,8 @@ function getCoverageSummary() {
         if (!jsonOutput) {
           process.exit(0);
         }
-      } else {
+      }
+      else {
         console.log(`❌ Coverage below threshold (${overallCoverage.toFixed(2)}% < ${threshold}%)`);
         if (!jsonOutput) {
           process.exit(1);
@@ -102,21 +103,21 @@ function getCoverageSummary() {
         branches: { covered: coveredBranches, total: totalBranches, percentage: branchCoverage },
         functions: { covered: coveredFunctions, total: totalFunctions, percentage: functionCoverage },
         lines: { covered: coveredLines, total: totalLines, percentage: lineCoverage },
-        overall: overallCoverage
+        overall: overallCoverage,
       };
       console.log('\n📋 JSON Output:');
       console.log(JSON.stringify(summary, null, 2));
     }
-
-  } catch (error) {
+  }
+  catch (error) {
     console.error('❌ Error reading coverage file:', error.message);
     process.exit(1);
   }
 }
 
 // スクリプトが直接実行された場合
-if (require.main === module) {
+if (import.meta.url === `file://${process.argv[1]}`) {
   getCoverageSummary();
 }
 
-module.exports = { getCoverageSummary };
+export { getCoverageSummary };

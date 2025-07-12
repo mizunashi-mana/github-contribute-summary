@@ -16,10 +16,6 @@ export default [
       '.next/**/*',
       'node_modules/**/*',
       'coverage/**/*',
-      '*.config.js',
-      'jest.config.js',
-      'jest.setup.js',
-      'scripts/**/*',
     ],
   },
   js.configs.recommended,
@@ -31,7 +27,7 @@ export default [
   }),
   ...compat.extends('next/core-web-vitals'),
   {
-    files: ['**/*.{js,jsx,ts,tsx}'],
+    files: ['**/*.{js,jsx,mjs,ts,tsx}'],
     languageOptions: {
       parser: typescriptParser,
       parserOptions: {

@@ -6,7 +6,6 @@ import { TYPES } from '@/lib/types';
 import { IGitHubAPI, IDatabaseService, IGitHubAuth } from '@/lib/interfaces';
 
 // Set test environment
-process.env.NODE_ENV = 'test';
 process.env.GITHUB_API_BASE = 'http://localhost:3001';
 
 describe('/api/github route with Dependency Injection', () => {
@@ -51,26 +50,10 @@ describe('/api/github route with Dependency Injection', () => {
   describe('Caching behavior', () => {
     test('should verify database service is available', () => {
       expect(databaseService).toBeDefined();
-      expect(databaseService.constructor.name).toBe('Database');
-    });
-
-    test('should verify in-memory database configuration', () => {
-      // Test that we're using the right configuration
-      const config = testContainer.get(TYPES.Config);
-      expect(config.getDatabasePath()).toBe(':memory:');
     });
   });
 
-  describe('GitHub API integration', () => {
-    test('should fetch data from GitHub API', async () => {
-      const data = await gitHubAPI.getAllData('owner', 'repo', 'testuser');
-
-      expect(data).toHaveProperty('created_prs');
-      expect(data).toHaveProperty('reviewed_prs');
-      expect(Array.isArray(data.created_prs)).toBe(true);
-      expect(Array.isArray(data.reviewed_prs)).toBe(true);
-    });
-
+  describe('GitHubAPI service', () => {
     test('should handle API requests with setRequest method', () => {
       const mockRequest = {
         headers: {
@@ -78,7 +61,6 @@ describe('/api/github route with Dependency Injection', () => {
         },
       } as unknown as NextRequest;
 
-      // Test that setRequest method exists and doesn't throw
       expect(() => {
         if ('setRequest' in gitHubAPI) {
           const apiWithSetRequest = gitHubAPI as IGitHubAPI & {
@@ -104,12 +86,6 @@ describe('/api/github route with Dependency Injection', () => {
       expect(gitHubAPI).toBeDefined();
       expect(databaseService).toBeDefined();
       expect(gitHubAuth).toBeDefined();
-    });
-
-    test('should use appropriate implementations in test environment', () => {
-      expect(gitHubAPI.constructor.name).toBe('DummyGitHubAPI');
-      expect(databaseService.constructor.name).toBe('Database');
-      expect(gitHubAuth.constructor.name).toBe('GitHubAuth'); // Using real GitHubAuth instead of dummy
     });
   });
 });

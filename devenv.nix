@@ -1,6 +1,10 @@
 { pkgs, lib, config, inputs, ... }:
 
 {
+  env = {
+    NODE_OPTIONS = "--experimental-vm-modules";
+  };
+
   # https://devenv.sh/packages/
   packages = [];
 
