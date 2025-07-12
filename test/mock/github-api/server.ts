@@ -3,6 +3,11 @@ import cors from 'cors';
 import { Server } from 'node:http';
 import { mockData } from '@~test/mock/github-api/data';
 
+const mockRepositories = mockData.repositories as Record<string, unknown>;
+const mockPullRequestsByRepositories = mockData.pullRequests as Record<string, unknown[]>;
+const mockReviewsByPullRequests = mockData.reviews as Record<string, unknown[]>;
+const mockUsers = mockData.users as Record<string, unknown>;
+
 export function buildApp() {
   const app = express();
 
@@ -26,7 +31,7 @@ export function buildApp() {
     const { owner, repo } = req.params;
     const repoKey = `${owner}/${repo}`;
 
-    const repository = mockData.repositories[repoKey];
+    const repository = mockRepositories[repoKey];
     if (!repository) {
       return res.status(404).json({
         message: 'Not Found',
@@ -43,7 +48,7 @@ export function buildApp() {
     const { state = 'open', per_page = 100, page = 1 } = req.query;
     const repoKey = `${owner}/${repo}`;
 
-    const pullRequests = mockData.pullRequests[repoKey] || [];
+    const pullRequests = mockPullRequestsByRepositories[repoKey] || [];
 
     // Filter by state
     let filteredPRs = pullRequests;
@@ -64,7 +69,7 @@ export function buildApp() {
     const { owner, repo, pull_number } = req.params;
     const repoKey = `${owner}/${repo}`;
 
-    const pullRequests = mockData.pullRequests[repoKey] || [];
+    const pullRequests = mockPullRequestsByRepositories[repoKey] || [];
     const pullRequest = pullRequests.find((pr: unknown) => (pr as { number: number }).number === parseInt(pull_number));
 
     if (!pullRequest) {
@@ -81,7 +86,7 @@ export function buildApp() {
   app.get(`${API_BASE}/repos/:owner/:repo/pulls/:pull_number/reviews`, (req, res) => {
     const { pull_number } = req.params;
 
-    const reviews = mockData.reviews[pull_number] || [];
+    const reviews = mockReviewsByPullRequests[pull_number] || [];
     sendGitHubResponse(res, reviews);
   });
 
@@ -89,7 +94,7 @@ export function buildApp() {
   app.get(`${API_BASE}/users/:username`, (req, res) => {
     const { username } = req.params;
 
-    const user = mockData.users[username];
+    const user = mockUsers[username];
     if (!user) {
       return res.status(404).json({
         message: 'Not Found',
